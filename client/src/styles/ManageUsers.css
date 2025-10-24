@@ -1,0 +1,93 @@
+.manage-users-container {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 100%;
+  overflow-x: auto;
+  background-color: #f9f9f9;
+}
+
+.manage-users-container h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin: 0 auto 20px auto;
+  display: block;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.user-table th,
+.user-table td {
+  border: 1px solid #ddd;
+  padding: 12px 10px;
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+  max-width: 250px;
+}
+
+.user-table th {
+  background-color: #f0f0f0;
+  font-weight: 600;
+  color: #444;
+}
+
+.user-table tr.blocked {
+  background-color: #ffe6e6;
+}
+
+.user-table td button {
+  margin: 2px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.user-table td button:hover {
+  background-color: #0056b3;
+}
+
+@media screen and (max-width: 768px) {
+  .user-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .user-table th,
+  .user-table td {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .user-table td button {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+
+  .search-input {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+}

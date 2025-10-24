@@ -1,0 +1,21 @@
+.exchange-history-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.history-table th,
+.history-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.history-table th {
+  background-color: #f0f0f0;
+}

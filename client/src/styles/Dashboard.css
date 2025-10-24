@@ -1,0 +1,23 @@
+.dashboard-container {
+  padding: 2rem;
+  text-align: center;
+}
+
+.dashboard-buttons {
+  margin: 2rem 0;
+}
+
+.dashboard-buttons button {
+  margin: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.dashboard-stats {
+  margin-top: 2rem;
+  text-align: left;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -1,0 +1,103 @@
+.dashboard-container {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-container h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+section.metrics,
+section.listings {
+  margin-bottom: 2rem;
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+.metrics ul {
+  list-style: none;
+  padding: 0;
+}
+
+.metrics li {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.metrics li strong {
+  color: #222;
+}
+
+.listings table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.listings th,
+.listings td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.listings th {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.listings tr:hover {
+  background-color: #f5f5f5;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .listings table,
+  .listings thead,
+  .listings tbody,
+  .listings th,
+  .listings td,
+  .listings tr {
+    display: block;
+  }
+
+  .listings tr {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem;
+  }
+
+  .listings td {
+    padding: 0.5rem;
+    text-align: right;
+    position: relative;
+  }
+
+  .listings td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 0.5rem;
+    font-weight: bold;
+    text-align: left;
+    color: #666;
+  }
+}

@@ -1,0 +1,65 @@
+
+.eco-container {
+  text-align: center;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  background-color: #e6f7e6;
+  min-height: 100vh;
+}
+
+.points {
+  font-size: 1.5rem;
+  color: #2e7d32;
+}
+
+.actions button {
+  margin: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #66bb6a;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  background-color: #4caf50;
+}
+
+.message {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #388e3c;
+}
+
+.leaderboard {
+  margin-top: 2rem;
+  background-color: #c8e6c9;
+  padding: 1rem;
+  border-radius: 8px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.leaderboard h2 {
+  margin-bottom: 1rem;
+  color: #2e7d32;
+}
+
+.leaderboard ul {
+  list-style: none;
+  padding: 0;
+}
+
+.leaderboard li {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: #388e3c;
+}
+.leaderboard li span {
+  color: gold;
+  margin-left: 8px;
+  font-size: 1.2em;
+}

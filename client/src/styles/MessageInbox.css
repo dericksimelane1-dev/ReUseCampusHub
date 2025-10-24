@@ -1,0 +1,73 @@
+/* Container styling */
+.inbox-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading */
+.inbox-container h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+/* Conversation list */
+.conversation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Each conversation item */
+.conversation-list li {
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover effect */
+.conversation-list li:hover {
+  background-color: #eef6ff;
+}
+
+/* Link styling */
+.conversation-list a {
+  text-decoration: none;
+  color: #0077cc;
+  font-weight: 500;
+}
+
+/* Link hover */
+.conversation-list a:hover {
+  text-decoration: underline;
+}
+
+/* Empty state */
+.inbox-container p {
+  text-align: center;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .inbox-container {
+    padding: 15px;
+  }
+
+  .conversation-list li {
+    padding: 10px 12px;
+  }
+
+  .inbox-container h2 {
+    font-size: 20px;
+  }
+}

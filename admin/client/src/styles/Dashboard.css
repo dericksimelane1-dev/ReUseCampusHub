@@ -1,0 +1,30 @@
+.dashboard-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.metrics ul {
+  list-style: none;
+  padding: 0;
+}
+
+.metrics li {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.listings table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.listings th, .listings td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.listings th {
+  background-color: #f4f4f4;
+}
