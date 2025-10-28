@@ -4,8 +4,9 @@ import '../styles/ManageUsers.css';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
-  const [columns, setColumns] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const columns = ['id', 'full_name', 'email', 'phone_number', 'location'];
 
   useEffect(() => {
     fetchUsers();
@@ -15,9 +16,6 @@ const ManageUsers = () => {
     try {
       const response = await axios.get('http://localhost:5000/api/users');
       setUsers(response.data);
-      if (response.data.length > 0) {
-        setColumns(Object.keys(response.data[0]));
-      }
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -55,10 +53,11 @@ const ManageUsers = () => {
     }
   };
 
-  // Filter users based on search term
   const filteredUsers = users.filter((user) =>
-    Object.values(user).some((value) =>
-      typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase())
+    Object.values(user).some(
+      (value) =>
+        typeof value === 'string' &&
+        value.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
@@ -85,9 +84,9 @@ const ManageUsers = () => {
         </thead>
         <tbody>
           {filteredUsers.map((user) => (
-            <tr key={user.id} className={user.status === 'blocked' ? 'blocked' : ''}>
+            <tr key={user.id || `${user.email}-${user.phone_number}`}>
               {columns.map((col) => (
-                <td key={col}>
+                <td key={`${user.id}-${col}`}>
                   {col === 'location' && user[col]
                     ? `${user[col].lat}, ${user[col].lng}`
                     : typeof user[col] === 'object' && user[col] !== null

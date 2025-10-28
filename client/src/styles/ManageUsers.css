@@ -91,3 +91,8 @@
     padding: 8px;
   }
 }
+/* Prevent wrapping in the ID column */
+.user-table td:first-child,
+.user-table th:first-child {
+  white-space: nowrap;
+}

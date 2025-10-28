@@ -1,37 +1,39 @@
-
 import React, { useEffect, useState } from 'react';
-import { itemListings, platformMetrics } from './DashboardData';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminDashBoard.css';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
- 
+  const [metrics, setMetrics] = useState({});
+  const [listings, setListings] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token === 'admin-token') {
-      
+    if (token !== 'admin-token') {
+      navigate('/unauthorized');
+      return;
     }
-  }, []);
 
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
+    fetch('http://localhost:5000/api/admin/dashboard')
+      .then(res => res.json())
+      .then(data => {
+        setMetrics(data.metrics);
+        setListings(data.listings);
+      })
+      .catch(err => console.error('Error fetching dashboard data:', err));
+  }, [navigate]);
 
   return (
     <div className="dashboard-container">
-     
-
       <h1>Admin Dashboard</h1>
 
       <section className="metrics">
         <h2>Platform Metrics</h2>
         <ul>
-          <li><strong>Total Users:</strong> {platformMetrics.totalUsers}</li>
-          <li><strong>Total Items Listed:</strong> {platformMetrics.totalItems}</li>
-          <li><strong>Total Exchanges:</strong> {platformMetrics.totalExchanges}</li>
-          <li><strong>Eco-Points Awarded:</strong> {platformMetrics.ecoPointsAwarded}</li>
+          <li><strong>Total Users:</strong> {metrics.totalUsers}</li>
+          <li><strong>Total Items Listed:</strong> {metrics.totalItems}</li>
+          <li><strong>Total Exchanges:</strong> {metrics.totalExchanges}</li>
+        
         </ul>
       </section>
 
@@ -46,7 +48,7 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {itemListings.map(item => (
+            {listings.map(item => (
               <tr key={item.id}>
                 <td>{item.id}</td>
                 <td>{item.name}</td>

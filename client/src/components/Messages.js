@@ -6,6 +6,7 @@ const Messages = ({ currentUserId }) => {
   const { itemId, receiverId } = useParams();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [showExchangePrompt, setShowExchangePrompt] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -70,6 +71,52 @@ const Messages = ({ currentUserId }) => {
     scrollToBottom();
   }, [messages]);
 
+  const handleExchangePrompt = async (response) => {
+    const message = response === 'yes'
+      ? '✅ I agree to exchange this item.'
+      : '❌ I do not want to exchange this item.';
+
+    try {
+      // Send message
+      await fetch('http://localhost:5000/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderId: currentUserId,
+          receiverId,
+          itemId,
+          content: message,
+        }),
+      });
+
+      // Save exchange response
+      await fetch('http://localhost:5000/api/exchange/response', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          itemId,
+          requesterId: currentUserId,
+          response,
+        }),
+      });
+
+      setMessages(prev => [
+        ...prev,
+        {
+          sender_id: currentUserId,
+          receiver_id: receiverId,
+          item_id: itemId,
+          content: message,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+      setShowExchangePrompt(false);
+      scrollToBottom();
+    } catch (err) {
+      console.error('Error handling exchange prompt:', err);
+    }
+  };
+
   return (
     <div className="messages-container">
       <h2>Messages</h2>
@@ -90,6 +137,18 @@ const Messages = ({ currentUserId }) => {
           onChange={(e) => setNewMessage(e.target.value)}
         />
         <button onClick={handleSend}>Send</button>
+      </div>
+
+      <div className="exchange-prompt">
+        {!showExchangePrompt ? (
+          <button onClick={() => setShowExchangePrompt(true)}>Exchange?</button>
+        ) : (
+          <div className="exchange-response-buttons">
+            <p>Do you want to exchange this item?</p>
+            <button onClick={() => handleExchangePrompt('yes')}>Yes</button>
+            <button onClick={() => handleExchangePrompt('no')}>No</button>
+          </div>
+        )}
       </div>
     </div>
   );

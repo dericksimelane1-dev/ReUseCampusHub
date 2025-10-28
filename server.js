@@ -12,6 +12,8 @@ import conversationRoutes from './routes/conversationRoutes.js';
 import messagesRoute from './routes/messagesRoute.js';
 import updatePointsRoute from './routes/updatePoints.js';
 import userRoutes from './routes/ManageUsersRoute.js';
+import exchangeRoute from'./routes/exchangeRoute.js';
+import adminDashboardRoute from'./routes/adminDashboardRoute.js';
 
 
 const app = express();
@@ -35,6 +37,8 @@ app.use('/api', conversationRoutes);
 app.use('/api', messagesRoute);
 app.use('/api/updatePoints', updatePointsRoute);
 app.use('/api/users', userRoutes);
+app.use('/api/exchange', exchangeRoute);
+app.use('/api/admin', adminDashboardRoute);
 
 // 404 handler
 app.use((req, res) => {

@@ -150,6 +150,7 @@ const ItemList = () => {
           <option value="electronics">Electronics</option>
           <option value="clothes">Clothes</option>
           <option value="textbook">Textbook</option>
+          <option value="textbook">furniture</option>
         </select>
       </div>
 
@@ -216,7 +217,7 @@ const ItemList = () => {
                   className="messages-button"
                   onClick={() => navigate(`/messages/${item.id}/${item.user_id}`)}
                 >
-                  Message Re-user
+                  Message Owner
                 </button>
               )}
             </li>
@@ -255,8 +256,9 @@ const ItemList = () => {
           />
           <select value={category} onChange={(e) => setCategory(e.target.value)} required>
             <option value="electronics">Electronics</option>
-            <option value="clothes">Clothes</option>
+            <option value="clothes">Clothing</option>
             <option value="textbook">Textbook</option>
+            <option value="Textbook">furniture</option>
           </select>
           <label>Select Location on Map:</label>
           <MapPicker setLocation={setLocation} />

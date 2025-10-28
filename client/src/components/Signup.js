@@ -127,8 +127,9 @@ function Signup() {
         >
           <option value="">Select Your Interests</option>
           <option value="Electronic">Electronic</option>
-          <option value="clothes">clothes</option>
+          <option value="clothes">clothing</option>
           <option value="Textbook">Textbook</option>
+          <option value="Textbook">furniture</option>
         </select>
 
         <div className="map-section">

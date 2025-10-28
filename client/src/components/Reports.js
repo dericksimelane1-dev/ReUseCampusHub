@@ -18,7 +18,7 @@ const Reports = () => {
 
   return (
     <div className="reports-container">
-      <h2>Admin Reports</h2>
+      <h2>ReUse Reports</h2>
       <table className="reports-table">
         <thead>
           <tr>

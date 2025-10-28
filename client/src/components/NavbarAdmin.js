@@ -16,8 +16,7 @@ const NavbarAdmin = () => {
       <ul>
         <li><Link to="/adminDashboard">Dashboard</Link></li>
         <li><Link to="/ManageUsers">Manage Users</Link></li>
-        <li><Link to="/Reports">Reports</Link></li>
-        <li><Link to="/ModerateItemsExchange">Moderate Items Exchange</Link></li>
+        <li><Link to="/Reports">Reuse Report</Link></li>
         <li><Link to="/ExchangeHistory">Exchange History</Link></li>
         <li><button onClick={handleLogout} className="logout-button">Logout</button></li>
       </ul>

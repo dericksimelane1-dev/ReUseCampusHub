@@ -6,7 +6,7 @@ import AdminDashboard from './components/AdminDashboard';
 import ManageUsers from './components/ManageUsers';
 import Reports from './components/Reports';
 import ModerateItemsExchange from './components/ModerateItemsExchange';
-import ExchangeHistory from './components/ExchangeHistory';
+import ExchangeTracking from './components/ExchangeHistory';
 import ProtectedRoute from './components/ProtectedRoute';
 import NavbarAdmin from './components/NavbarAdmin';
 
@@ -63,26 +63,19 @@ function AdminApp() {
           }
         />
         <Route
-          path="/admin/reports"
+          path="/reports"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated && isAdmin}>
               <Reports />
             </ProtectedRoute>
           }
         />
+        
         <Route
-          path="/admin/moderate-items"
+          path="/ExchangeHistory"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated && isAdmin}>
-              <ModerateItemsExchange />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/exchange-history"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated && isAdmin}>
-              <ExchangeHistory />
+              <ExchangeTracking />
             </ProtectedRoute>
           }
         />
