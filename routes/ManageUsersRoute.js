@@ -1,4 +1,3 @@
-// routes/ManageUsersRoute.js
 import express from 'express';
 import pkg from 'pg';
 const { Pool } = pkg;
@@ -16,7 +15,9 @@ const pool = new Pool({
 // GET all users
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT full_name, email, phone_number, location FROM users ORDER BY id');
+    const result = await pool.query(
+      'SELECT id, full_name, email, phone_number, location, status FROM users ORDER BY email'
+    );
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -25,11 +26,12 @@ router.get('/', async (req, res) => {
 });
 
 // Block user
-router.put('/:id/block', async (req, res) => {
-  const { id } = req.params;
+router.put('/:email/block', async (req, res) => {
+  const { email } = req.params;
+   console.log("Blocking user with email:", email); // Debug log
   try {
-    await pool.query('UPDATE users SET status = $1 WHERE id = $2', ['blocked', id]);
-    res.status(200).json({ message: `User ${id} blocked successfully.` });
+    await pool.query('UPDATE users SET status = $1 WHERE email = $2', ['blocked', email]);
+    res.status(200).json({ message: `User ${email} blocked successfully.` });
   } catch (error) {
     console.error('Error blocking user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -37,11 +39,11 @@ router.put('/:id/block', async (req, res) => {
 });
 
 // Unblock user
-router.put('/:id/unblock', async (req, res) => {
-  const { id } = req.params;
+router.put('/:email/unblock', async (req, res) => {
+  const { email } = req.params;
   try {
-    await pool.query('UPDATE users SET status = $1 WHERE id = $2', ['active', id]);
-    res.status(200).json({ message: `User ${id} unblocked successfully.` });
+    await pool.query('UPDATE users SET status = $1 WHERE email = $2', ['active', email]);
+    res.status(200).json({ message: `User ${email} unblocked successfully.` });
   } catch (error) {
     console.error('Error unblocking user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -49,11 +51,11 @@ router.put('/:id/unblock', async (req, res) => {
 });
 
 // Delete user
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
+router.delete('/:email', async (req, res) => {
+  const { email } = req.params;
   try {
-    await pool.query('DELETE FROM users WHERE id = $1', [id]);
-    res.status(200).json({ message: `User ${id} deleted successfully.` });
+    await pool.query('DELETE FROM users WHERE email = $1', [email]);
+    res.status(200).json({ message: `User ${email} deleted successfully.` });
   } catch (error) {
     console.error('Error deleting user:', error);
     res.status(500).json({ error: 'Internal Server Error' });

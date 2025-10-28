@@ -44,7 +44,7 @@ const AdminDashboard = () => {
             <tr>
               <th>ID</th>
               <th>Item Name</th>
-              <th>Status</th>
+              <th>Category</th>
             </tr>
           </thead>
           <tbody>
