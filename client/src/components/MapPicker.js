@@ -7,7 +7,7 @@ const MapPicker = ({ setLocation }) => {
   useEffect(() => {
     const initMap = () => {
       const map = new window.google.maps.Map(mapRef.current, {
-        center: { lat: -25.7676, lng: 29.4648 }, // Default to Middelburg
+        center: { lat: -25.7676, lng: 29.4648 }, // Middelburg
         zoom: 13,
       });
 
@@ -28,21 +28,24 @@ const MapPicker = ({ setLocation }) => {
     };
 
     const loadGoogleMapsScript = () => {
-      const existingScript = document.getElementById('googleMaps');
+  const existingScript = document.getElementById('googleMaps');
 
-      if (!existingScript) {
-        const script = document.createElement('script');
-        script.src =
-          'https://maps.googleapis.com/maps/api/js?key=AIzaSyCIho9p8rGILl7OsjimbOMjsEn0SaaxrQE';
-        script.id = 'googleMaps';
-        script.async = true;
- script.defer = true;
-        script.onload = initMap;
-        document.head.appendChild(script);
-      } else {
-        initMap();
-      }
-    };
+  if (!existingScript) {
+    console.log('ENV:', process.env);
+    const apiKey = 'AIzaSyBKxhggv1a7Y3h8yR37nRKQfFZ4EI8TMOc';
+    console.log('Google Maps API Key:', apiKey); // ✅ Add this line here
+
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
+    script.id = 'googleMaps';
+    script.async = true;
+    script.defer = true;
+    script.onload = initMap;
+    document.head.appendChild(script);
+  } else {
+    initMap();
+  }
+};
 
     if (!window.google || !window.google.maps) {
       loadGoogleMapsScript();

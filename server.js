@@ -12,8 +12,12 @@ import conversationRoutes from './routes/conversationRoutes.js';
 import messagesRoute from './routes/messagesRoute.js';
 import updatePointsRoute from './routes/updatePoints.js';
 import userRoutes from './routes/ManageUsersRoute.js';
-import exchangeRoute from'./routes/exchangeRoute.js';
-import adminDashboardRoute from'./routes/adminDashboardRoute.js';
+import exchange from'./routes/exchange.js';
+import analysisRoute from'./routes/analysisRoute.js';
+import predictController from'./routes/predictController.js';
+import pointsRoutes from'./routes/points.js';
+import exchangeHistoryRoute from './routes/exchangeH.js';
+
 
 
 const app = express();
@@ -37,8 +41,12 @@ app.use('/api', conversationRoutes);
 app.use('/api', messagesRoute);
 app.use('/api/updatePoints', updatePointsRoute);
 app.use('/api/users', userRoutes);
-app.use('/api/exchange', exchangeRoute);
-app.use('/api/admin', adminDashboardRoute);
+app.use('/api/exchange', exchange);
+app.use('/api/admin', analysisRoute);
+app.use('/api', predictController);
+app.use('/api', pointsRoutes);
+app.use('/api/exchange-history', exchangeHistoryRoute);
+
 
 // 404 handler
 app.use((req, res) => {

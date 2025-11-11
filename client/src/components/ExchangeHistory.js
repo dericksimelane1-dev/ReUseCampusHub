@@ -1,39 +1,54 @@
-
-import React from 'react';
+// ReuseCampushub/client/src/components/exchangeHistory.js
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import '../styles/ExchangeHistory.css';
 
 const ExchangeHistory = () => {
-  const history = [
-    { id: 301, item: 'Bookshelf', fromUser: 'Alice', toUser: 'Bob', date: '2025-09-15' },
-    { id: 302, item: 'Coffee Table', fromUser: 'Charlie', toUser: 'Dana', date: '2025-09-20' },
-    { id: 303, item: 'Microwave Oven', fromUser: 'Eve', toUser: 'Frank', date: '2025-10-01' },
-  ];
+  const [exchangesH, setExchanges] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchExchanges = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/exchange-history');
+        setExchanges(response.data);
+      } catch (error) {
+        console.error('Error fetching exchange history:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExchanges();
+  }, []);
 
   return (
     <div className="exchange-history-container">
       <h2>Exchange History</h2>
-      <table className="history-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Item</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {history.map(record => (
-            <tr key={record.id}>
-              <td>{record.id}</td>
-              <td>{record.item}</td>
-              <td>{record.fromUser}</td>
-              <td>{record.toUser}</td>
-              <td>{record.date}</td>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <table className="exchange-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Status</th>
+              <th>Item ID</th>
+              <th>Updated At</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {exchangesH.map((exchangeH) => (
+              <tr key={exchangeH.id}>
+                <td>{exchangeH.id}</td>
+                <td>{exchangeH.status}</td>
+                <td>{exchangeH.item_id}</td>
+                <td>{new Date(exchangeH.updated_at).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

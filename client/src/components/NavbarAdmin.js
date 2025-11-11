@@ -7,17 +7,23 @@ const NavbarAdmin = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.dispatchEvent(new Event('storage')); // Trigger auth re-check
-    navigate('/login');
+   // window.dispatchEvent(new Event('storage')); // Trigger auth re-check
+    navigate('/');
+    window.location.reload(); // ✅ Ensures state resets
   };
 
   return (
     <nav className="navbar-admin">
+      {/* My heading and logo*/}
+            <div className="navbar-logo">
+              <h2>Administrator</h2>
+              
+            </div>
+
       <ul>
-        <li><Link to="/adminDashboard">Dashboard</Link></li>
+        <li><Link to="/analysis">Analysis</Link></li>
         <li><Link to="/ManageUsers">Manage Users</Link></li>
-        <li><Link to="/Reports">Reuse Report</Link></li>
-        <li><Link to="/ExchangeHistory">Exchange History</Link></li>
+        <li><Link to="/exchangeHistory">Exchange History</Link></li>
         <li><button onClick={handleLogout} className="logout-button">Logout</button></li>
       </ul>
     </nav>

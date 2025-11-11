@@ -24,18 +24,36 @@ const ItemList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setUserId(decoded.id);
-        fetchRecommendations(decoded.interests);
-      } catch (err) {
-        console.error('Invalid token:', err);
-      }
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      setUserId(decoded.id);
+      fetchRecommendations(decoded.interests || []);
+    } catch (err) {
+      console.error('Invalid token:', err);
     }
+  }
+  fetchItems();
+}, []);
+
+
+useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/items');
+        const data = await res.json();
+        setItems(data);
+      } catch (err) {
+        console.error('Error fetching items:', err);
+      }
+    };
+
     fetchItems();
   }, []);
+
+  
+
 
   const fetchItems = async () => {
     try {
@@ -47,25 +65,37 @@ const ItemList = () => {
     }
   };
 
-  const fetchRecommendations = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    try {
-      const response = await fetch('http://localhost:5001/recommendations', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) return;
-      const result = await response.json();
-      if (Array.isArray(result.items)) {
-        setRecommendations(result.items);
-      }
-    } catch (error) {
-      console.error('Error fetching recommendations:', error);
+  const fetchRecommendations = async (userInterests = []) => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  try {
+    const response = await fetch('http://localhost:5001/recommendations', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) return;
+    const result = await response.json();
+
+    if (Array.isArray(result.items)) {
+      // Remove duplicates by item_id
+      const uniqueItems = Array.from(new Map(result.items.map(item => [item.item_id, item])).values());
+
+      // Filter by user interests (categories)
+      const filteredItems = uniqueItems.filter(item =>
+        userInterests.includes(item.category)
+      );
+
+      // If filtered list is empty, fallback to uniqueItems
+      setRecommendations(filteredItems.length > 0 ? filteredItems : uniqueItems);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching recommendations:', error);
+  }
+};
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -149,8 +179,8 @@ const ItemList = () => {
           <option value="">All Categories</option>
           <option value="electronics">Electronics</option>
           <option value="clothes">Clothes</option>
-          <option value="textbook">Textbook</option>
-          <option value="textbook">furniture</option>
+          <option value="textbook">Textbooks</option>
+          <option value="furniture">furniture</option>
         </select>
       </div>
 
@@ -174,56 +204,60 @@ const ItemList = () => {
         </div>
       )}
 
-      <h2>Communicate with Re-User for exchange in Message</h2>
+      <h2>List of available Items</h2>
       <button onClick={toggleView} className="toggle-button">
         {showRecentOnly ? 'Show All Items' : 'Show Recent Items'}
       </button>
 
+     
       <ul className="item-list">
-        {displayedItems.map(item => {
-          let loc = null;
-          try {
-            loc = JSON.parse(item.location);
-          } catch (e) {
-            loc = null;
-          }
-          return (
-            <li key={item.id} className="item-card">
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-              <p><strong>Exchange Conditions:</strong> {item.exchange_condition}</p>
-              
-              <p><strong>Posted by:</strong> {item.poster_name}</p>
-              <img
-                src={`http://localhost:5000/api/items/${item.id}/image`}
-                alt={item.title}
-                className="item-image"
-              />
-              {loc && (
-                <div className="item-map">
-                  <iframe
-                    width="100%"
-                    height="200"
-                    frameBorder="0"
-                    style={{ border: 0 }}
-                    src={`https://www.google.com/maps?q=${loc.lat},${loc.lng}&hl=es;z=14&output=embed`}
-                    allowFullScreen
-                    title="Item Location"
-                  ></iframe>
-                </div>
-              )}
-              {userId !== item.user_id && (
-                <button
-                  className="messages-button"
-                  onClick={() => navigate(`/messages/${item.id}/${item.user_id}`)}
-                >
-                  Message Owner
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+  {displayedItems.map(item => {
+    let loc = null;
+    try {
+      loc = JSON.parse(item.location);
+    } catch (e) {
+      loc = null;
+    }
+
+    const isCompleted = item.status === 'completed';
+
+    return (
+      <li key={item.id} className={`item-card ${isCompleted ? 'inactive' : ''}`}>
+        <h3>{item.title}</h3>
+        <p>{item.description}</p>
+        <p><strong>Exchange Conditions:</strong> {item.exchange_condition}</p>
+        <p><strong>Posted by:</strong> {item.poster_name}</p>
+        <p><strong>Status:</strong> {isCompleted ? '✅ Completed' : '🟢 Active'}</p>
+        <img
+          src={`http://localhost:5000/api/items/${item.id}/image`}
+          alt={item.title}
+          className="item-image"
+        />
+        {loc && (
+          <div className="item-map">
+            <iframe
+              width="100%"
+              height="200"
+              frameBorder="0"
+              style={{ border: 0 }}
+              src={`https://www.google.com/maps?q=${loc.lat},${loc.lng}&hl=es;z=14&output=embed`}
+              allowFullScreen
+              title="Item Location"
+            ></iframe>
+          </div>
+        )}
+        {userId !== item.user_id && !isCompleted && (
+          <button
+            className="messages-button"
+            onClick={() => navigate(`/messages/${item.id}/${item.user_id}`)}
+          >
+            Message Owner
+          </button>
+        )}
+      </li>
+    );
+  })}
+</ul>
 
       <h2>Post for Re-Use</h2>
       {messages.text && (
@@ -257,8 +291,8 @@ const ItemList = () => {
           <select value={category} onChange={(e) => setCategory(e.target.value)} required>
             <option value="electronics">Electronics</option>
             <option value="clothes">Clothing</option>
-            <option value="textbook">Textbook</option>
-            <option value="Textbook">furniture</option>
+            <option value="textbook">Textbooks</option>
+            <option value="furniture">furniture</option>
           </select>
           <label>Select Location on Map:</label>
           <MapPicker setLocation={setLocation} />

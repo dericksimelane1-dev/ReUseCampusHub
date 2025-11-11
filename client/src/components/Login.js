@@ -17,8 +17,8 @@ function Login() {
     if (email === 'Admin@reuse.com' && password === '(Dm)36921') {
       localStorage.setItem('token', 'admin-token');
       window.dispatchEvent(new Event('storage')); // Trigger re-check
-      console.log('Navigating to adminDashboard...');
-      navigate('/adminDashboard');
+      console.log('Navigating to Analysis...');
+      navigate('/analysis');
       return;
     }
 
@@ -37,6 +37,7 @@ function Login() {
       }
 
       localStorage.setItem('token', data.token);
+      localStorage.setItem('currentUser', JSON.stringify(data.user)); // ✅ CORRECT
       window.dispatchEvent(new Event('storage')); // Trigger re-check
       console.log('Navigating to dashboard...');
       navigate('/dashboard');

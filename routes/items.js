@@ -28,6 +28,46 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: 'Server error while fetching items' });
   }
 });
+// routes/items.js
+router.get('/items', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT items.*, exchanges.status 
+      FROM items
+      LEFT JOIN exchanges ON items.id = exchanges.item_id
+      WHERE items.active = true OR exchanges.status = 'completed'
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching items:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+// GET /api/items
+
+router.get('/', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, title, location FROM items WHERE location IS NOT NULL');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching items:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET /api/users
+router.get('/', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, username, location FROM users WHERE location IS NOT NULL');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 // ✅ GET image by item ID
 router.get('/:id/image', async (req, res) => {

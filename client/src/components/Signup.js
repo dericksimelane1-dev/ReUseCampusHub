@@ -66,15 +66,6 @@ function Signup() {
         throw new Error(data.message || 'Signup failed');
       }
 
-      // ✅ Log signup to the recommendation system
-      await fetch('http://localhost:5000/log_signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: data.user_id,
-          location: formData.location,
-        }),
-      });
 
       setSuccess('Signup successful! Redirecting to login...');
       setTimeout(() => navigate('/login'), 2000);
@@ -126,10 +117,10 @@ function Signup() {
           required
         >
           <option value="">Select Your Interests</option>
-          <option value="Electronic">Electronic</option>
-          <option value="clothes">clothing</option>
-          <option value="Textbook">Textbook</option>
-          <option value="Textbook">furniture</option>
+          <option value="Electronics">Electronics</option>
+          <option value="clothes">clothes</option>
+          <option value="Textbook">Textbooks</option>
+          <option value="furniture">furniture</option>
         </select>
 
         <div className="map-section">

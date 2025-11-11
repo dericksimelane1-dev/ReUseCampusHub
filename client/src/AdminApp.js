@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-import AdminDashboard from './components/AdminDashboard';
+import Analysis from './components/Analysis';
 import ManageUsers from './components/ManageUsers';
-import Reports from './components/Reports';
-import ModerateItemsExchange from './components/ModerateItemsExchange';
-import ExchangeTracking from './components/ExchangeHistory';
+//import ExchangeTracking from './components/ExchangeStatus';
 import ProtectedRoute from './components/ProtectedRoute';
 import NavbarAdmin from './components/NavbarAdmin';
+import ExchangeHistory from './components/exchangeHistory';
 
 function AdminApp() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -24,7 +23,7 @@ function AdminApp() {
         try {
           const decoded = jwtDecode(token);
           setIsAuthenticated(true);
-          setIsAdmin(decoded.role === 'admin'); // assuming token has a 'role' field
+          setIsAdmin(decoded.role === 'admin');
         } catch (err) {
           console.error('Invalid token:', err);
           setIsAuthenticated(false);
@@ -36,21 +35,22 @@ function AdminApp() {
 
     checkAuth();
     window.addEventListener('storage', checkAuth);
-
-    return () => {
-      window.removeEventListener('storage', checkAuth);
-    };
+    return () => window.removeEventListener('storage', checkAuth);
   }, []);
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>; // Wait until auth is checked
+  }
 
   return (
     <Router>
       {(isAuthenticated && isAdmin) && <NavbarAdmin />}
       <Routes>
         <Route
-          path="/adminDashboard"
+          path="/analysis"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated && isAdmin}>
-              <AdminDashboard />
+              <Analysis />
             </ProtectedRoute>
           }
         />
@@ -63,25 +63,16 @@ function AdminApp() {
           }
         />
         <Route
-          path="/reports"
+          path="/exchangeHistory"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated && isAdmin}>
-              <Reports />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/ExchangeHistory"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated && isAdmin}>
-              <ExchangeTracking />
+              <ExchangeHistory />
             </ProtectedRoute>
           }
         />
         <Route
           path="*"
-          element={<Navigate to={isAuthenticated && isAdmin ? "/adminDashboard" : "/login"} />}
+          element={<Navigate to={isAuthenticated && isAdmin ? "/analysis" : "/login"} />}
         />
       </Routes>
     </Router>

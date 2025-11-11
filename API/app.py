@@ -84,25 +84,24 @@ def recommend():
         if not user_id:
             return jsonify({'error': 'Invalid token: missing user ID'}), 400
 
-        # Use SQLAlchemy engine instead of psycopg2 connection
+        # Connect to DB
         engine = get_sqlalchemy_engine()
+
+        # Get user interests
         user_query = "SELECT interests FROM users WHERE id = %s LIMIT 1"
         user_df = pd.read_sql(user_query, engine, params=(user_id,))
-
         if user_df.empty or not user_df.iloc[0]['interests']:
             return jsonify({'error': 'User interests not found'}), 404
 
         interests_text = user_df.iloc[0]['interests']
 
-        # Load the trained recommendation model
+        # Load trained model
         model_data = joblib.load(os.path.join(model_dir, 'recommendation_model.joblib'))
         vectorizer = model_data['vectorizer']
-        items_df = model_data['items_df']
 
-        # ✅ Merge item_id from live database
-        live_items_query = "SELECT id AS item_id, category FROM items"
-        live_items_df = pd.read_sql(live_items_query, engine)
-        items_df = pd.merge(items_df, live_items_df, on='category', how='left')
+        # ✅ Use only live items from DB
+        live_items_query = "SELECT id AS item_id, title, description, category FROM items"
+        items_df = pd.read_sql(live_items_query, engine)
 
         # Transform interests and item categories
         interest_vector = vectorizer.transform([interests_text])
@@ -111,13 +110,11 @@ def recommend():
         # Compute similarity scores
         similarity_scores = cosine_similarity(interest_vector, item_vectors).flatten()
 
-        # ✅ Lower threshold to allow more matches
+        # Filter based on similarity
         matching_indices = [i for i, score in enumerate(similarity_scores) if score > 0.01]
-        recommended_items = items_df.iloc[matching_indices]
-        
-        # ✅ Remove duplicates based on item_id
-        recommended_items = recommended_items.drop_duplicates(subset=['item_id','title', 'description'])
+        recommended_items = items_df.iloc[matching_indices].drop_duplicates(subset=['item_id'])
 
+        print("User interests:", interests_text)
         print("Matched items count:", len(recommended_items))
 
         return jsonify({'items': recommended_items.to_dict(orient='records')})
