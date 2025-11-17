@@ -7,6 +7,15 @@ import { FaRecycle, FaRedditSquare } from 'react-icons/fa';
 const Navbar = () => {
   const navigate = useNavigate();
 
+  /**
+   * Logs the current user out by removing the stored authentication token,
+   * navigating to the application's root route, and forcing a full page reload
+   * to ensure any in-memory state is reset.
+   *
+   * @function handleLogout
+   * @memberof Navbar
+   * @returns {void}
+   */
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');

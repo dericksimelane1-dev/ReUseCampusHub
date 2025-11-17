@@ -4,8 +4,14 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
-  },
+  "test": "jest",
+  "test:coverage": "jest --coverage",
+  "test:unit": "jest --testPathPattern=tests/unit",
+  "test:unit:coverage": "jest --coverage --testPathPattern=tests/unit",
+  "test:component": "jest --testPathPattern=tests/components",
+  "test:routes": "jest --testPathPattern=routes"
+}
+,
   "dependencies": {
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
@@ -19,5 +25,11 @@
     "pg": "^8.16.3",
     "python-shell": "^5.0.0",
     "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4"
   }
 }

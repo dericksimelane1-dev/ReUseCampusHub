@@ -1,3 +1,92 @@
+/**
+ * ItemList React component
+ *
+ * Renders a searchable, filterable list of items available for re-use, allows authenticated
+ * users to post new items with a location and image, and displays personalized recommendations.
+ *
+ * Behaviour and responsibilities:
+ * - Fetches all items from the backend API at GET http://localhost:5000/api/items and stores
+ *   them in local state.
+ * - If a JWT token is present in localStorage, decodes it to obtain the current user id and
+ *   interests (via jwtDecode) and fetches recommendations from
+ *   GET http://localhost:5001/recommendations using the token in the Authorization header.
+ *   Recommendations are deduplicated by item_id and filtered by the user's interests (categories).
+ * - Supports searching by keyword (title or description) and filtering by category in the UI.
+ * - Supports toggling between a "recent only" view (first 5 results) and a full view sorted
+ *   by category.
+ * - For each item, displays title, description, exchange condition, poster name, status,
+ *   image (via GET http://localhost:5000/api/items/:id/image) and an embedded Google Maps iframe
+ *   when a valid location is available (item.location expected to be a JSON string with { lat, lng }).
+ * - If the current user is not the owner of an active item, a "Message Owner" button navigates
+ *   to /messages/:itemId/:ownerId.
+ * - Authenticated users (determined by presence of decoded token id) can post new items via a
+ *   multipart/form-data POST to http://localhost:5000/api/items. The form includes:
+ *     - title (string)
+ *     - description (string)
+ *     - location (stringified JSON)
+ *     - image (File)
+ *     - exchangeCondition (string)
+ *     - category (string)
+ *   The token is sent in the Authorization header.
+ * - Provides an image preview when a file is selected via an <input type="file"> before upload.
+ * - Displays success/error messages returned by the backend or produced by client-side validation.
+ *
+ * State (React useState):
+ * - items: Array<Object> - fetched items from the main backend.
+ * - recommendations: Array<Object> - fetched and filtered recommendation items.
+ * - name: string - input for the new item title.
+ * - description: string - input for the new item description.
+ * - exchangeCondition: string - input for the new item's exchange conditions.
+ * - category: string - selected category for new item (default 'electronics').
+ * - location: { lat: number, lng: number } | null - selected geography from MapPicker.
+ * - image: File | null - selected image file for upload.
+ * - imagePreview: string | null - data URL for previewing the selected image.
+ * - userId: string | null - id decoded from JWT; used to determine ownership and posting rights.
+ * - messages: { type: 'success' | 'error' | '', text: string } - UI feedback messages.
+ * - showRecentOnly: boolean - toggle to show the first 5 items only.
+ * - interests: string - (unused in rendering) intended to hold user interests input.
+ * - searchKeyword: string - keyword string used to filter items by title/description.
+ * - searchCategory: string - category string used to further filter items.
+ *
+ * Key internal functions:
+ * - fetchItems(): Promise<void>
+ *   Fetches items from GET /api/items, stores them in `items` state and logs errors to console.
+ *
+ * - fetchRecommendations(userInterests: Array<string> = []): Promise<void>
+ *   Fetches recommendation data from the recommendation service at http://localhost:5001/recommendations.
+ *   Requires Authorization: Bearer <token>. Deduplicates results by item_id and filters by the
+ *   provided userInterests. Updates `recommendations` state.
+ *
+ * - handleImageChange(e: Event): void
+ *   Reads the selected File from an <input type="file">, stores it in `image` and creates a
+ *   data URL for `imagePreview` so the user can preview before upload.
+ *
+ * - handleSubmit(e: Event): Promise<void>
+ *   Handles the posting of a new item. Prevents default form submission, validates presence of
+ *   token, userId and location, constructs a FormData payload and POSTs it to /api/items with
+ *   Authorization header. On success clears form fields and refetches items; on error sets `messages`.
+ *
+ * - toggleView(): void
+ *   Toggles the `showRecentOnly` boolean to switch list presentation.
+ *
+ * Rendering:
+ * - A search bar (text input + category select).
+ * - A recommendations section (if recommendations exist) showing deduplicated recommended items.
+ * - The main items list, using `displayedItems` derived from search, category filter and toggle state.
+ * - A posting form for authenticated users which includes MapPicker for selecting location,
+ *   file input for images and client-side previewing.
+ *
+ * 
+ * - item objects returned by the backend are expected to contain at least:
+ *   { id | item_id, title, description, exchange_condition, category, location (JSON string), poster_name, user_id, status }
+ * - image endpoints are expected at GET /api/items/:id/image (for both item.id and item.item_id usage).
+ * - JWT decoding uses jwtDecode(token) and the decoded token is expected to have { id, interests }.
+ * - MapPicker is a child component that calls setLocation({ lat, lng }) when location is selected.
+ * - Error handling is conservative: errors are logged and user-facing messages are provided where appropriate.
+ *
+ * @component
+ * @returns {JSX.Element} The ItemList component JSX
+ */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
