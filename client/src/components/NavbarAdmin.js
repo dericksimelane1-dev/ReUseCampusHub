@@ -18,7 +18,7 @@ import '../styles/NavbarAdmin.css';
  * - A <nav> element with a logo/heading and an unordered list of navigation items:
  *   - Link to "/analysis"
  *   - Link to "/ManageUsers"
- *   - Link to "/exchangeHistory"
+ *   - Link to "/ExchangeHistory"
  *   - A logout <button> that invokes handleLogout
  *
  * Notes:
@@ -49,7 +49,7 @@ const NavbarAdmin = () => {
       <ul>
         <li><Link to="/analysis">Analysis</Link></li>
         <li><Link to="/ManageUsers">Manage Users</Link></li>
-        <li><Link to="/exchangeHistory">Exchange History</Link></li>
+        <li><Link to="/ExchangeHistory">Exchange History</Link></li>
         <li><button onClick={handleLogout} className="logout-button">Logout</button></li>
       </ul>
     </nav>

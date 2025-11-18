@@ -7,7 +7,7 @@ import ManageUsers from './components/ManageUsers';
 //import ExchangeTracking from './components/ExchangeStatus';
 import ProtectedRoute from './components/ProtectedRoute';
 import NavbarAdmin from './components/NavbarAdmin';
-import ExchangeHistory from './components/exchangeHistory';
+import ExchangeHistory from './components/ExchangeHistory';
 
 function AdminApp() {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading
@@ -63,7 +63,7 @@ function AdminApp() {
           }
         />
         <Route
-          path="/exchangeHistory"
+          path="/ExchangeHistory"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated && isAdmin}>
               <ExchangeHistory />
