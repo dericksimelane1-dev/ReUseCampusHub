@@ -3,7 +3,6 @@ dotenv.config();
 import path from 'path';
 import express from 'express';
 import cors from 'cors';
-dotenv.config();
 
 // Import routes
 import forgotPasswordRoute from './routes/forgot-password.js';
@@ -23,17 +22,27 @@ import exchangeHistoryRoute from './routes/exchangeH.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// ✅ CORS Configuration
+const allowedOrigins = [
+  'https://reusecampushub.onrender.com', // Production frontend
+  'http://localhost:3000' // Local development frontend
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
+// ✅ Handle Preflight Requests
+app.options('*', cors());
+
+// ✅ Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ✅ API Routes
-/*
-app.get('/', (req, res) => {
-  res.send('ReUseCampusHub backend is running!');
-}); */
-
 app.use('/api', authRouter);
 app.use('/api', forgotPasswordRoute);
 app.use('/api', resetPasswordRoute);
@@ -48,7 +57,6 @@ app.use('/api', predictController);
 app.use('/api', pointsRoutes);
 app.use('/api/exchange-history', exchangeHistoryRoute);
 
-
 // ✅ Serve React build for non-API routes
 const __dirnamePath = path.resolve();
 app.use(express.static(path.join(__dirnamePath, 'client/build')));
@@ -57,7 +65,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirnamePath, 'client/build', 'index.html'));
 });
 
-// Start server
+// ✅ Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
