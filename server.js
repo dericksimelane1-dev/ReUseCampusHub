@@ -29,9 +29,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ✅ API Routes
+/*
 app.get('/', (req, res) => {
   res.send('ReUseCampusHub backend is running!');
-});
+}); */
 
 app.use('/api', authRouter);
 app.use('/api', forgotPasswordRoute);
