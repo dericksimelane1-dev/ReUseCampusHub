@@ -17,7 +17,11 @@ import jwt  # Make sure you have PyJWT installed
 app = Flask(__name__)
 #cors local settings
 #CORS(app, origins=["http://localhost:3000"])
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+
+CORS(app, resources={r"/*": {"origins": [
+    "http://localhost:3000",
+    "https://reusecampushub.onrender.com"
+]}}, supports_credentials=True)
 
 # Load models
 model_dir = os.path.dirname(__file__)
