@@ -15,7 +15,9 @@ import jwt  # Make sure you have PyJWT installed
   # Adjust as needed
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"])
+#cors local settings
+#CORS(app, origins=["http://localhost:3000"])
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
 # Load models
 model_dir = os.path.dirname(__file__)
