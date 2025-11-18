@@ -1,20 +1,20 @@
 # ---------- Stage 1: Build React Frontend ----------
 FROM node:20-alpine AS frontend
-WORKDIR /app
-COPY client/package*.json ./client/
-RUN cd client && npm ci
-COPY client ./client
-RUN cd client && npm run build
+WORKDIR /app/client
+COPY client/package*.json ./
+RUN npm ci
+COPY client ./
+RUN npm run build
 
 # ---------- Stage 2: Node Backend ----------
 FROM node:20-alpine AS backend
 WORKDIR /app
-COPY server/package*.json ./server/
-RUN cd server && npm ci
-COPY server ./server
+COPY package*.json ./
+RUN npm ci
+COPY . .
 
 # Copy React build into backend's public folder
-COPY --from=frontend /app/client/build ./server/public
+COPY --from=frontend /app/client/build ./client/build
 
 EXPOSE 5000
-CMD ["node", "server/index.js"]
+CMD ["node", "server.js"]
