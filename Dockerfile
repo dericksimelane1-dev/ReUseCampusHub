@@ -1,29 +1,20 @@
-# Use Node.js 20 Alpine for lightweight image
-FROM node:20-alpine
-
-# Set working directory
+# ---------- Stage 1: Build React Frontend ----------
+FROM node:20-alpine AS frontend
 WORKDIR /app
+COPY client/package*.json ./client/
+RUN cd client && npm ci
+COPY client ./client
+RUN cd client && npm run build
 
-# Copy dependency files first
-COPY package*.json ./
+# ---------- Stage 2: Node Backend ----------
+FROM node:20-alpine AS backend
+WORKDIR /app
+COPY server/package*.json ./server/
+RUN cd server && npm ci
+COPY server ./server
 
-# Install dependencies
-RUN npm ci
+# Copy React build into backend's public folder
+COPY --from=frontend /app/client/build ./server/public
 
-# Copy all project files
-COPY . .
-
-# Fix react-scripts permission
-RUN chmod +x node_modules/.bin/react-scripts
-
-# Build React app
-RUN npm run build
-
-# Install serve globally to serve React build
-RUN npm install -g serve
-
-# Expose port 3000
-EXPOSE 3000
-
-# Start the app
-CMD ["serve", "-s", "build", "-l", "3000"]
+EXPOSE 5000
+CMD ["node", "server/index.js"]
