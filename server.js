@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
-
+import path from 'path';
 import express from 'express';
 import cors from 'cors';
 
+// Import routes
 import forgotPasswordRoute from './routes/forgot-password.js';
 import itemsRouter from './routes/items.js';
 import authRouter from './routes/auth.js';
@@ -12,13 +13,11 @@ import conversationRoutes from './routes/conversationRoutes.js';
 import messagesRoute from './routes/messagesRoute.js';
 import updatePointsRoute from './routes/updatePoints.js';
 import userRoutes from './routes/ManageUsersRoute.js';
-import exchange from'./routes/exchange.js';
-import analysisRoute from'./routes/analysisRoute.js';
-import predictController from'./routes/predictController.js';
-import pointsRoutes from'./routes/points.js';
+import exchange from './routes/exchange.js';
+import analysisRoute from './routes/analysisRoute.js';
+import predictController from './routes/predictController.js';
+import pointsRoutes from './routes/points.js';
 import exchangeHistoryRoute from './routes/exchangeH.js';
-
-
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,7 +27,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// ✅ API Routes
 app.get('/', (req, res) => {
   res.send('ReUseCampusHub backend is running!');
 });
@@ -47,10 +46,12 @@ app.use('/api', predictController);
 app.use('/api', pointsRoutes);
 app.use('/api/exchange-history', exchangeHistoryRoute);
 
+// ✅ Serve React build for non-API routes
+const __dirnamePath = path.resolve();
+app.use(express.static(path.join(__dirnamePath, 'client/build')));
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirnamePath, 'client/build', 'index.html'));
 });
 
 // Start server
