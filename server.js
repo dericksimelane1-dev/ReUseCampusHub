@@ -50,7 +50,7 @@ app.use('/api/exchange-history', exchangeHistoryRoute);
 
 // ✅ Serve React build for non-API routes
 const __dirnamePath = path.resolve();
-app.use.static(path.join(__dirnamePath, 'client/build'));
+app.use(express.static(path.join(__dirnamePath, 'client/build')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirnamePath, 'client/build', 'index.html'));
