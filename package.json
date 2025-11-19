@@ -4,23 +4,23 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-  "test": "jest",
-  "test:coverage": "jest --coverage",
-  "test:unit": "jest --testPathPattern=tests/unit",
-  "test:unit:coverage": "jest --coverage --testPathPattern=tests/unit",
-  "test:component": "jest --testPathPattern=tests/components",
-  "test:routes": "jest --testPathPattern=routes"
-}
-,
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "test:unit:coverage": "jest --coverage --testPathPattern=tests/unit",
+    "test:component": "jest --testPathPattern=tests/components",
+    "test:routes": "jest --testPathPattern=routes"
+  },
   "dependencies": {
-    "axios": "^1.12.2",
+    "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.4",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.9",
     "pg": "^8.16.3",
     "python-shell": "^5.0.0",

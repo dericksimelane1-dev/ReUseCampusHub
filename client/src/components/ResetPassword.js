@@ -4,47 +4,74 @@ import '../styles/ResetPassword.css';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
+  const navigate = useNavigate();
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const token = searchParams.get('token');
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  // ✅ Password strength validation
+  const validatePassword = (pwd) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d@$!%*?&^#(){}[\]<>.,;:'"~`|\\/-]{8,}$/;
+    return regex.test(pwd);
+  };
+
+  // ✅ Validate fields live
+  const validateFields = () => {
+    const newErrors = {};
+
+    if (!token) {
+      newErrors.token = 'Invalid or missing token.';
+    }
+
+    if (!password) {
+      newErrors.password = 'Password is required.';
+    } else if (!validatePassword(password)) {
+      newErrors.password =
+        'Password must be at least 8 characters, include uppercase, lowercase, number, and special character.';
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password.';
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match.';
+    }
+
+    setErrors(newErrors);
+    setIsFormValid(Object.keys(newErrors).length === 0);
+  };
 
   useEffect(() => {
-    if (!token) {
-      setError('Invalid or missing token.');
-    }
-  }, [token]);
+    validateFields();
+  }, [password, confirmPassword, token]);
 
   const handleReset = async (e) => {
     e.preventDefault();
     setMessage('');
-    setError('');
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-console.log('Token:', token);
-console.log('Password:', password);
+    if (!isFormValid) return;
 
     try {
       const response = await fetch('http://localhost:5000/api/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({
+          token: decodeURIComponent(token),
+          password: password,
+        }),
       });
 
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.message || 'Password reset failed');
 
-      setMessage('Password reset successful! Redirecting to login...');
+      setMessage('✅ Password reset successful! Redirecting to login...');
       setTimeout(() => navigate('/login'), 4000);
     } catch (err) {
-      setError(err.message);
+      setErrors({ submit: err.message });
     }
   };
 
@@ -59,6 +86,8 @@ console.log('Password:', password);
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        {errors.password && <p className="error-message">{errors.password}</p>}
+
         <input
           type="password"
           placeholder="Confirm New Password"
@@ -66,10 +95,17 @@ console.log('Password:', password);
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
-        <button type="submit">Reset Password</button>
+        {errors.confirmPassword && (
+          <p className="error-message">{errors.confirmPassword}</p>
+        )}
+
+        <button type="submit" disabled={!isFormValid}>
+          Reset Password
+        </button>
       </form>
+
       {message && <p className="success-message">{message}</p>}
-      {error && <p className="error-message">{error}</p>}
+      {errors.submit && <p className="error-message">{errors.submit}</p>}
     </div>
   );
 };

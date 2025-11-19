@@ -6,8 +6,8 @@ import pool from '../db.js'; // Make sure db.js is also converted to ESM
 const router = express.Router();
 
 router.post('/reset-password', async (req, res) => {
-  console.log('Password reset attempt with token:', req.body.token);
   const { token, password } = req.body;
+  console.log('Password reset attempt with token:', token);
 
   if (!token || !password || password.length < 8) {
     return res.status(400).json({ message: 'Invalid input' });
@@ -20,7 +20,7 @@ router.post('/reset-password', async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(400).json({ message: 'Invalid or expired token' });
+      return res.status(400).json({ message: 'Password reset successful' });
     }
 
     const { email, expires_at } = result.rows[0];
@@ -32,8 +32,8 @@ router.post('/reset-password', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await pool.query('BEGIN');
-    await pool.query('UPDATE users SET password = $1 WHERE email = $2', [hashedPassword, email]);
-    await pool.query('DELETE FROM password_resets WHERE token = $1', [token]);
+    await pool.query('UPDATE users SET password_hash = $1 WHERE email = $2', [hashedPassword, email]);
+    await pool.query('DELETE FROM users WHERE token = $1', [token]);
     await pool.query('COMMIT');
 
     res.json({ message: 'Password reset successful' });

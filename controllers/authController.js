@@ -1,6 +1,8 @@
 import pool from '../db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
+import 'dotenv/config';
 
 // Login Controller
 export const loginUser = async (req, res) => {
@@ -43,27 +45,46 @@ export const loginUser = async (req, res) => {
 };
 
 // Signup Controller
+
+
 export const signupUser = async (req, res) => {
-  const { email, password, full_name, phone_number,interests, location } = req.body;
-  console.log('Signup request body:', req.body);
+  const { email, password, full_name, phone_number, interests, location } = req.body;
 
   if (!location || typeof location.lat !== 'number' || typeof location.lng !== 'number') {
     return res.status(400).json({ message: 'Valid location is required' });
   }
 
   try {
+    // Check if user exists
     const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (existingUser.rows.length > 0) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    // Verify email using Abstract API
+    const apiKey = process.env.ABSTRACT_API_KEY;
+    const url = `https://emailreputation.abstractapi.com/v1/?api_key=${apiKey}&email=${encodeURIComponent(email)}`;
+
+    const verifyResponse = await axios.get(url);
+    const verifyData = verifyResponse.data;
+
+    console.log('Email verification response:', verifyData);
+
+    const { email_deliverability } = verifyData;
+
+    if (!email_deliverability.is_format_valid || !email_deliverability.is_smtp_valid) {
+      return res.status(400).json({ message: 'Invalid or non-existent email address' });
+    }
+
+    // Hash password
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
 
+    // Insert user
     await pool.query(
-      `INSERT INTO users (email, password_hash, full_name, phone_number,interests, location)
-       VALUES ($1, $2, $3, $4,$5, $6::jsonb)`,
-      [email, password_hash, full_name, phone_number,interests, JSON.stringify(location)]
+      `INSERT INTO users (email, password_hash, full_name, phone_number, interests, location)
+       VALUES ($1, $2, $3, $4, $5, $6::jsonb)`,
+      [email, password_hash, full_name, phone_number, interests, JSON.stringify(location)]
     );
 
     res.status(201).json({ message: 'User registered successfully' });
@@ -72,3 +93,4 @@ export const signupUser = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -28,30 +28,89 @@ function Signup() {
     password: '',
     full_name: '',
     phone_number: '',
-    category: '',
+    interests: '',
     location: null,
   });
-  const [error, setError] = useState('');
+
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePhoneNumber = (number) => /^0\d{9}$/.test(number);
+
+  const validateField = (name, value) => {
+    let error = '';
+    switch (name) {
+      case 'full_name':
+      if (!value.trim()) {
+       error = 'Full name is required.';
+        } else if (value.trim().length < 5) {
+       error = 'Full name must be at least 5 characters long.';
+      }
+      break;
+      case 'email':
+        if (!validateEmail(value)) error = 'Invalid email format.';
+        break;
+      case 'password':
+        if (!value.trim()) {
+           error = 'Password is required.';
+        } else if (!validatePassword(value)) {
+          error = 'Password must be at least 8 characters, include uppercase, lowercase, number, and special character.';
+        }
+      break;
+      case 'phone_number':
+        if (!validatePhoneNumber(value)) error = 'Phone must be 10 digits starting with 0.';
+        break;
+      case 'interests':
+        if (!value) error = 'Please select your interests.';
+        break;
+      default:
+        break;
+    }
+    return error;
+  };
+
+  const validatePassword = (password) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d@$!%*?&^#(){}[\]<>.,;:'"~`|\\/-]{8,}$/;
+  return regex.test(password);
+};
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    const error = validateField(name, value);
+    setErrors({ ...errors, [name]: error });
   };
 
   const handleLocationSelect = (latlng) => {
     setFormData({ ...formData, location: latlng });
+    if (!latlng) {
+      setErrors({ ...errors, location: 'Please select your location.' });
+    } else {
+      setErrors({ ...errors, location: '' });
+    }
   };
+
+  useEffect(() => {
+    const allValid =
+      formData.full_name &&
+      validateEmail(formData.email) &&
+      formData.password &&
+      validatePhoneNumber(formData.phone_number) &&
+      formData.interests &&
+      formData.location &&
+      Object.values(errors).every((err) => err === '');
+    setIsFormValid(allValid);
+  }, [formData, errors]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setSuccess('');
 
-    if (!formData.location) {
-      setError('Please select your location on the map.');
-      return;
-    }
+    if (!isFormValid) return;
 
     try {
       const response = await fetch('http://localhost:5000/api/signup', {
@@ -66,11 +125,10 @@ function Signup() {
         throw new Error(data.message || 'Signup failed');
       }
 
-
       setSuccess('Signup successful! Redirecting to login...');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
-      setError(err.message);
+      setErrors({ ...errors, submit: err.message });
     }
   };
 
@@ -84,44 +142,48 @@ function Signup() {
           placeholder="Full Name"
           value={formData.full_name}
           onChange={handleChange}
-          required
         />
+        {errors.full_name && <p className="error">{errors.full_name}</p>}
+
         <input
           type="email"
           name="email"
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
-          required
         />
+        {errors.email && <p className="error">{errors.email}</p>}
+
         <input
           type="password"
           name="password"
           placeholder="Password"
           value={formData.password}
           onChange={handleChange}
-          required
         />
+        {errors.password && <p className="error">{errors.password}</p>}
+
         <input
           type="text"
           name="phone_number"
           placeholder="Phone Number"
           value={formData.phone_number}
           onChange={handleChange}
-          required
         />
+        {errors.phone_number && <p className="error">{errors.phone_number}</p>}
+
         <select
           name="interests"
           value={formData.interests}
           onChange={handleChange}
-          required
         >
           <option value="">Select Your Interests</option>
           <option value="Electronics">Electronics</option>
-          <option value="clothes">clothes</option>
-          <option value="Textbook">Textbooks</option>
-          <option value="furniture">furniture</option>
+          <option value="Clothes">Clothes</option>
+          <option value="Textbooks">Textbooks</option>
+          <option value="Furniture">Furniture</option>
         </select>
+        {errors.interests && <p className="error">{errors.interests}</p>}
 
         <div className="map-section">
           <label>Select Your Location:</label>
@@ -138,9 +200,12 @@ function Signup() {
             {formData.location && <Marker position={formData.location} />}
           </MapContainer>
         </div>
+        {errors.location && <p className="error">{errors.location}</p>}
 
-        <button type="submit">Register</button>
-        {error && <p className="error">{error}</p>}
+        <button type="submit" disabled={!isFormValid}>
+          Register
+        </button>
+        {errors.submit && <p className="error">{errors.submit}</p>}
         {success && <p className="success">{success}</p>}
       </form>
       <div className="signup-links">
