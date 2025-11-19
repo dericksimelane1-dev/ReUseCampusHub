@@ -18,6 +18,7 @@ import analysisRoute from './routes/analysisRoute.js';
 import predictController from './routes/predictController.js';
 import pointsRoutes from './routes/points.js';
 import exchangeHistoryRoute from './routes/exchangeH.js';
+import exchangeRouter from './routes/exchangeRoute.js'
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -56,6 +57,7 @@ app.use('/api/admin', analysisRoute);
 app.use('/api', predictController);
 app.use('/api', pointsRoutes);
 app.use('/api/exchange-history', exchangeHistoryRoute);
+app.use('/api/exchangeRoute', exchangeRouter);
 
 // ✅ Serve React build for non-API routes
 const __dirnamePath = path.resolve();
