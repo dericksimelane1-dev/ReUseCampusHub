@@ -55,3 +55,72 @@
   color: #777;
   margin-top: 40px;
 }
+/* Slider Section */
+.slider-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 20px 0;
+}
+
+/* Slider Container */
+.slider-container {
+  position: relative;
+  width: 80%;
+  max-width: 900px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Slider Image */
+.slider-image {
+  width: 50%;
+  height: 50%;
+  display: block;
+  object-fit: cover;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Navigation Buttons */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  font-size: 2rem;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+  z-index: 10;
+}
+
+.slider-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Positioning Buttons */
+.slider-btn.prev {
+  left: 15px;
+}
+
+.slider-btn.next {
+  right: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .slider-container {
+    width: 95%;
+  }
+
+  .slider-btn {
+    font-size: 1.5rem;
+    padding: 8px 12px;
+  }
+}
