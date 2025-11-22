@@ -1,92 +1,115 @@
-.item-list-container {
-  max-width: 800px;
-  margin: 0 auto;
+
+/* Two-column page layout */
+.items-page {
+  display: grid;
+  grid-template-columns: 1fr 280px; /* Left: items, Right: recommendations */
+  gap: 24px;
+  align-items: start;
   padding: 20px;
   font-family: Arial, sans-serif;
 }
 
-.item-form {
+/* RIGHT: Recommendations panel */
+.recommendations-panel {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
+  max-height: 70vh; /* fixed height for scroll */
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 30px;
 }
 
-.item-form input[type="text"],
-.item-form textarea,
-.item-form input[type="file"] {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.recommendations-panel.sticky {
+  position: sticky;
+  top: 20px;
+  z-index: 5;
 }
 
-.item-form button {
-  padding: 10px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.item-form button:hover {
-  background-color: #0056b3;
-}
-
-.image-preview {
-  max-width: 100%;
-  height: auto;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.message {
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 4px;
+.recommendations-panel h2 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
   font-weight: bold;
+  text-align: center;
 }
 
-.message.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+/* Scroll container for recommendation cards */
+.recommendations-scroll {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 6px;
 }
 
-.message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+.recommendations-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.recommendations-scroll::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 8px;
+}
+.recommendations-scroll::-webkit-scrollbar-thumb {
+  background: #c8c8c8;
+  border-radius: 8px;
+}
+.recommendations-scroll::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
 }
 
-.item-list {
-  list-style: none;
-  padding: 0;
+/* Recommendation cards */
+.recommendation-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+  padding: 8px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
-.item-card {
-  border: 1px solid #ddd;
+.recommendation-card img {
+  width: 100%;
+  max-width: 100px;
+  height: 100px;
+  object-fit: cover;
   border-radius: 4px;
-  padding: 15px;
-  margin-bottom: 15px;
-  background-color: #f9f9f9;
+  margin-bottom: 6px;
 }
 
-.item-card h3 {
-  margin-top: 0;
+.recommendation-card h3 {
+  font-size: 14px;
+  margin: 4px 0;
 }
 
-.item-image {
-  max-width: 20%;
-  height: 20%;
-  margin-top: 10px;
-  border-radius: 4px;
+.recommendation-card p {
+  font-size: 12px;
+  color: #555;
 }
+
+/* LEFT: Item list */
+.item-list-container {
+  width: 100%;
+}
+
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  padding: 8px;
+}
+
+.search-bar select {
+  width: 160px;
+  padding: 8px;
+}
+
 .toggle-button {
-  margin: 1rem 0;
+  margin: 0 0 12px 0;
   padding: 0.5rem 1rem;
   background-color: #007bff;
   color: white;
@@ -98,7 +121,68 @@
 .toggle-button:hover {
   background-color: #0056b3;
 }
-.item-card.inactive {
-  opacity: 0.6;
-  pointer-events: none;
+
+.item-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item-card {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column; /* image below text */
+}
+
+.item-card h3 {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.item-card p {
+  margin: 4px 0;
+}
+
+.item-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  background: #28a745; /* green for Active */
+}
+
+.status-dot.inactive {
+  background: #d9534f; /* red for Not Available */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .items-page {
+    grid-template-columns: 1fr;
+  }
+  .recommendations-panel {
+    max-height: none;
+  }
+  .recommendations-scroll {
+    overflow: visible;
+  }
 }

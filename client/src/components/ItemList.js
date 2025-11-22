@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// v4 style
 import { jwtDecode } from 'jwt-decode';
 import MapPicker from './MapPicker';
 import '../styles/ItemList.css';
@@ -140,148 +142,192 @@ const ItemList = () => {
     ? filteredItems.slice(0, 5)
     : [...filteredItems].sort((a, b) => a.category.localeCompare(b.category));
 
-  return (
-    <div className="item-list-container">
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search by keyword..."
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-        />
-        <select value={searchCategory} onChange={(e) => setSearchCategory(e.target.value)}>
-          <option value="">All Categories</option>
-          <option value="electronics">Electronics</option>
-          <option value="clothes">Clothes</option>
-          <option value="textbook">Textbooks</option>
-          <option value="furniture">Furniture</option>
-        </select>
-      </div>
-
-      {recommendations.length > 0 && (
-        <div className="recommendations">
-          <h3>Recommended for You</h3>
-          <ul className="item-list">
-            {recommendations.map(item => (
-              <li key={item.item_id} className="item-card">
-                <h4>{item.title}</h4>
-                <p>{item.description}</p>
-                <img
-                  src={`http://localhost:5000/api/items/${item.item_id}/image`}
-                  alt={item.title}
-                  className="item-image"
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <h2>List of available Items</h2>
-      <button onClick={toggleView} className="toggle-button">
-        {showRecentOnly ? 'Show All Items' : 'Show Recent Items'}
-      </button>
-
-      <ul className="item-list">
-        {displayedItems.map(item => {
-          let loc = null;
-          try {
-            loc = JSON.parse(item.location);
-          } catch (e) {
-            loc = null;
-          }
-
-          const isNotAvailable = item.status === 'not available';
-
-          return (
-            <li key={item.id} className={`item-card ${isNotAvailable ? 'inactive' : ''}`}>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-              <p><strong>Exchange Conditions:</strong> {item.exchange_condition}</p>
-              <p><strong>Posted by:</strong> {item.poster_name}</p>
-              <p><strong>Status:</strong> {isNotAvailable ? '❌ Not Available' : '🟢 Active'}</p>
-              <img
-                src={`http://localhost:5000/api/items/${item.id}/image`}
-                alt={item.title}
-                className="item-image"
-              />
-              {loc && (
-                <div className="item-map">
-                  <iframe
-                    width="100%"
-                    height="200"
-                    frameBorder="0"
-                    style={{ border: 0 }}
-                    src={`https://www.google.com/maps?q=${loc.lat},${loc.lng}&hl=es;z=14&output=embed`}
-                    allowFullScreen
-                    title="Item Location"
-                  ></iframe>
-                </div>
-              )}
-              {userId !== item.user_id && !isNotAvailable && (
-                <button
-                  className="messages-button"
-                  onClick={() => navigate(`/messages/${item.id}/${item.user_id}`)}
-                >
-                  Message Owner
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-
-      <h2>Post for Re-Use</h2>
-      {messages.text && (
-        <div className={`messages ${messages.type}`}>
-          {messages.text}
-        </div>
-      )}
-
-      {userId && (
-        <form onSubmit={handleSubmit} className="item-form" encType="multipart/form-data">
+  
+return (
+  <div className="items-page">
+    {/* LEFT COLUMN: Search + List */}
+    <div className="content-panel">
+      <div className="item-list-container">
+        {/* Search row */}
+        <div className="search-bar">
           <input
             type="text"
-            placeholder="Item Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
+            placeholder="Search by keyword..."
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
           />
-          <textarea
-            placeholder="Item Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Exchange Conditions"
-            value={exchangeCondition}
-            onChange={(e) => setExchangeCondition(e.target.value)}
-            required
-          />
-          <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+          <select
+            value={searchCategory}
+            onChange={(e) => setSearchCategory(e.target.value)}
+          >
+            <option value="">All Categories</option>
             <option value="electronics">Electronics</option>
-            <option value="clothes">Clothing</option>
+            <option value="clothes">Clothes</option>
             <option value="textbook">Textbooks</option>
             <option value="furniture">Furniture</option>
           </select>
-          <label>Select Location on Map:</label>
-          <MapPicker setLocation={setLocation} />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            required
-          />
-          {imagePreview && (
-            <img src={imagePreview} alt="Preview" className="image-preview" />
-          )}
-          <button type="submit">Post For Re-use</button>
-        </form>
-      )}
+        </div>
+
+        {/* Toggle button */}
+        <button onClick={toggleView} className="toggle-button">
+          {showRecentOnly ? 'Show All Items' : 'Show Recent Items'}
+        </button>
+
+        {/* Item list title */}
+        <h2 className="section-title">List of available Items</h2>
+
+        {/* Item list */}
+        <ul className="item-list">
+          {displayedItems.map((item) => {
+            let loc = null;
+            try {
+              loc = JSON.parse(item.location);
+            } catch (e) {
+              loc = null;
+            }
+            const isNotAvailable = item.status === 'not available';
+            return (
+              <li
+                key={item.id}
+                className={`item-card ${isNotAvailable ? 'inactive' : ''}`}
+              >
+                {/* Optional image (kept as in your code) */}
+                <img
+                  src={`http://localhost:5000/api/items/${item.id}/image`}
+                  alt={item.title}
+                  className="item-image"
+                />
+
+                {/* Text content */}
+                <div className="item-content">
+                  <h3>{item.title}</h3>
+
+                  <p>{item.description}</p>
+                  <p>
+                    <strong>Exchange Conditions:</strong> {item.exchange_condition}
+                  </p>
+                  <p>
+                    <strong>Posted by:</strong> {item.poster_name}
+                  </p>
+
+                  {/* Status line with dot like screenshot */}
+                  <p className="status-line">
+                    <strong>Status:</strong>
+                    <span
+                      className={`status-dot ${
+                        isNotAvailable ? 'inactive' : ''
+                      }`}
+                    />
+                    {isNotAvailable ? 'Not Available' : 'Active'}
+                  </p>
+
+                  {/* Map (optional) */}
+                  {loc && (
+                    <div className="item-map">
+                      <iframe
+                        width="100%"
+                        height="200"
+                        frameBorder="0"
+                        style={{ border: 0 }}
+                        src={`https://www.google.com/maps?q=${loc.lat},${loc.lng}&hl=es;z=14&output=embed`}
+                        allowFullScreen
+                        title="Item Location"
+                      ></iframe>
+                    </div>
+                  )}
+
+                  {/* Message button */}
+                  {userId !== item.user_id && !isNotAvailable && (
+                    <button
+                      className="messages-button"
+                      onClick={() => navigate(`/messages/${item.id}/${item.user_id}`)}
+                    >
+                      Message Owner
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Post section (unchanged) */}
+        <h2 className="section-title">Post for Re-Use</h2>
+        {messages.text && (
+          <div className={`messages ${messages.type}`}>
+            {messages.text}
+          </div>
+        )}
+        {userId && (
+          <form onSubmit={handleSubmit} className="item-form" encType="multipart/form-data">
+            <input
+              type="text"
+              placeholder="Item Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <textarea
+              placeholder="Item Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Exchange Conditions"
+              value={exchangeCondition}
+              onChange={(e) => setExchangeCondition(e.target.value)}
+              required
+            />
+            <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+              <option value="electronics">Electronics</option>
+              <option value="clothes">Clothing</option>
+              <option value="textbook">Textbooks</option>
+              <option value="furniture">Furniture</option>
+            </select>
+
+            <label>Select Location on Map:</label>
+            <MapPicker setLocation={setLocation} />
+
+            <input type="file" accept="image/*" onChange={handleImageChange} required />
+            {imagePreview && (
+              <img src={imagePreview} alt="Preview" className="image-preview" />
+            )}
+            <button type="submit">Post For Re-use</button>
+          </form>
+        )}
+      </div>
     </div>
-  );
+
+    {/* RIGHT COLUMN: Recommendations */}
+   
+
+
+<aside className="recommendations-panel sticky">
+  <h2>Recommended for You</h2>
+  <div className="recommendations-scroll">
+    {recommendations.length === 0 ? (
+      <p style={{ color: '#777', fontSize: '12px' }}>No recommendations yet.</p>
+    ) : (
+      recommendations.map((rec) => (
+        <div key={rec.item_id} className="recommendation-card">
+          <img
+            src={`http://localhost:5000/api/items/${rec.item_id}/image`}
+            alt={rec.title}
+          />
+          <h3>{rec.title}</h3>
+          <p>{rec.description}</p>
+        </div>
+      ))
+    )}
+  </div>
+</aside>
+
+
+
+  </div>
+);
 };
 
 export default ItemList;
