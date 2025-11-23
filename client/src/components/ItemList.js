@@ -174,7 +174,7 @@ return (
         </button>
 
         {/* Item list title */}
-        <h2 className="section-title">List of available Items</h2>
+        <h2 className="section-title">List of Items</h2>
 
         {/* Item list */}
         <ul className="item-list">
