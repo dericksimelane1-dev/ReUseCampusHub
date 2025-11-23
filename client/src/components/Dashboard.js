@@ -33,7 +33,7 @@ const Dashboard = () => {
 
       {/* Header */}
       <header className="dashboard-header">
-        <h1>ReuseCampus Hub</h1>
+        <h1>ReUseCampus Hub</h1>
         <p className="tagline">Empowering Sustainability Through Student Exchange</p>
       </header>
 
