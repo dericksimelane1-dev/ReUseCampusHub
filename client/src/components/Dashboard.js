@@ -42,6 +42,13 @@ const Dashboard = () => {
         <p>
           Welcome to your campus sustainability hub! ReuseCampus helps students exchange, donate reusable items like textbooks, electronics, clothing, and furniture. Save money, reduce waste, and earn eco-points while making a difference.
         </p>
+        <p>
+          Whether you're looking to declutter or find affordable items, our platform connects you with fellow students on campus. Browse listings, chat securely, and arrange meetups easily.
+          
+        </p>
+        <p>
+          Join us in creating a more sustainable future, one exchange at a time!
+        </p>
       </section>
 
       {/* Features */}
